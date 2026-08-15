@@ -72,16 +72,9 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    console.log("========== LOGIN CONTROLLER ==========");
-
     const { email, password } = req.body || {};
 
-    console.log("Email:", email);
-    console.log("Password received:", password ? "YES" : "NO");
-
     if (!email || !password) {
-      console.log("❌ Missing email/password");
-
       return res.status(400).json({
         success: false,
         message: "Email and Password are required",
@@ -90,38 +83,24 @@ export const loginUser = async (req, res) => {
 
     const user = await userModel.findOne({ email });
 
-    console.log("User found:", user ? "YES" : "NO");
-
     if (!user) {
-      console.log("❌ USER NOT FOUND:", email);
-
       return res.status(400).json({
         success: false,
         message: "User not found",
       });
     }
 
-    console.log("User ID:", user._id);
-    console.log("User email:", user.email);
-    console.log("Has password:", user.password ? "YES" : "NO");
-
     const isPasswordValid = await bcrypt.compare(
       password,
       user.password
     );
 
-    console.log("Password valid:", isPasswordValid);
-
     if (!isPasswordValid) {
-      console.log("❌ INVALID PASSWORD");
-
       return res.status(400).json({
         success: false,
         message: "Password is invalid",
       });
     }
-
-    console.log("✅ LOGIN SUCCESS");
 
     const token = jwt.sign(
       {
@@ -134,12 +113,7 @@ export const loginUser = async (req, res) => {
       }
     );
 
-    const userResponse = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
+   
 
     return res.status(200).json({
       success: true,
@@ -147,12 +121,11 @@ export const loginUser = async (req, res) => {
       token,
       user: userResponse,
     });
-
   } catch (error) {
-    console.error("❌ LOGIN ERROR:", error);
+    console.error("Login error:", error);
 
     return res.status(500).json({
-   v   success: false,
+      success: false,
       message: "Internal Server Error",
     });
   }
