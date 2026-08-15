@@ -22,6 +22,17 @@ app.use(
     credentials: true,
   })
 );
+app.get("/debug", (req, res) => {
+  res.json({
+    message: "NEW SERVER CODE",
+    origin: req.headers.origin,
+    cors: "https://kitverse.vercel.app",
+  });
+});
+app.use("/product", productRouter);
+app.use("/user", router);
+app.use("/order", orderRouter);
+
 
 app.use(express.json());
 
