@@ -11,7 +11,8 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// ==================== MIDDLEWARE ====================
+
 app.use(
   cors({
     origin: [
@@ -22,27 +23,32 @@ app.use(
   })
 );
 
-// IMPORTANT: JSON parser must come BEFORE routes
+// IMPORTANT: body parser MUST come before routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Debug
+// ==================== DEBUG ====================
+
 app.get("/debug", (req, res) => {
   res.json({
     message: "NEW SERVER CODE",
+    bodyParser: "working",
     origin: req.headers.origin,
-    cors: "https://kitverse.vercel.app",
   });
 });
 
-// Routes — register only ONCE
+// ==================== ROUTES ====================
+
 app.use("/product", productRouter);
 app.use("/user", router);
 app.use("/order", orderRouter);
 
-// Database
+// ==================== DATABASE ====================
+
 connectDB();
 await connectRedis();
+
+// ==================== SERVER ====================
 
 const port = process.env.PORT || 5000;
 
