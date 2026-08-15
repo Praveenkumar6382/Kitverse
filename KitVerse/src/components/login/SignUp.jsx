@@ -13,7 +13,6 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [role, setRole] = useState("user"); // Default role is "user"
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,14 +22,14 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, {
-        name: username,
-        email,
-        password,
-        role, // Send the selected role to the backend
-      });
-
-      const userPayload = response.data.user || response.data.newuser; // Adjust based on your backend response structure
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/user/register`,
+        {
+          name: username,
+          email,
+          password,
+        },
+      );
 
       if (response.data.token) {
         dispatch(
@@ -40,17 +39,15 @@ const SignUp = () => {
           }),
         );
       }
-      toast.success(
-        `User Registered Successfully as ${role === "admin" ? "Admin" : "User"}`,
-      );
-      if (role === "admin") {
-        navigate("/admin/jerseys");
-      } else {
-        navigate("/");
-      }
+
+      toast.success("User Registered Successfully");
+
+      navigate("/");
     } catch (error) {
       console.log(error);
+
       setErrorMsg(error.response?.data?.message || "Signup Failed");
+
       toast.error(error.response?.data?.message || "Signup Failed");
     } finally {
       setLoading(false);
@@ -125,7 +122,6 @@ const SignUp = () => {
         )}
 
         {/* Username */}
-
         <label className="text-white text-sm">Username</label>
 
         <input
@@ -151,7 +147,6 @@ const SignUp = () => {
         />
 
         {/* Email */}
-
         <label className="text-white text-sm">Email Address</label>
 
         <input
@@ -177,7 +172,6 @@ const SignUp = () => {
         />
 
         {/* Password */}
-
         <label className="text-white text-sm">Password</label>
 
         <input
@@ -202,34 +196,7 @@ const SignUp = () => {
         "
         />
 
-        {/* Role Select (optional if you use admin registration) */}
-
-        <label className="text-white text-sm">Account Type</label>
-
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="
-          w-full
-          mt-2
-          mb-6
-          p-3
-          rounded-xl
-          bg-slate-900
-          text-white
-          border
-          border-gray-600
-          focus:border-emerald-400
-          outline-none
-        "
-        >
-          <option value="user">User</option>
-
-          <option value="admin">Admin</option>
-        </select>
-
         {/* Signup Button */}
-
         <button
           type="submit"
           disabled={loading}
@@ -249,7 +216,6 @@ const SignUp = () => {
         </button>
 
         {/* Divider */}
-
         <div
           className="
           flex
@@ -278,7 +244,6 @@ const SignUp = () => {
         </div>
 
         {/* Google Button */}
-
         <button
           type="button"
           className="
@@ -296,7 +261,6 @@ const SignUp = () => {
         </button>
 
         {/* Login */}
-
         <p
           className="
           text-center
