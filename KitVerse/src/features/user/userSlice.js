@@ -20,6 +20,7 @@ const clearUserFromLocalStorage = () => {
 
 const userSlice = createSlice({
   name: "user",
+
   initialState,
 
   reducers: {
@@ -42,6 +43,9 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout } = userSlice.actions;
+export const {
+  loginSuccess,
+  logout,
+} = userSlice.actions;
 
 export default userSlice.reducer;
