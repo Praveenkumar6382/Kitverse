@@ -141,7 +141,7 @@ const { user } = useSelector((state) => state.user);
 
       // Send order to backend
       const response = await axios.post(
-        "http://localhost:5000/order/createOrder",
+        `${import.meta.env.VITE_BACKEND_URL}/order/createOrder`,
         addOrderPayload,
         {
           headers: {

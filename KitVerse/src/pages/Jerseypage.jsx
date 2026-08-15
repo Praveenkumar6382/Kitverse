@@ -34,7 +34,7 @@ const Jerseypage = ({ searchTerm }) => {
         setLoading(true);
 
         const response = await axios.get(
-          "http://localhost:5000/product/products"
+          `${import.meta.env.VITE_BACKEND_URL}/product/products`
         );
 
         setJerseys(response.data.products || []);

@@ -49,8 +49,8 @@ const OrderPage = () => {
       }
 
       const endpoint = isAdmin
-        ? "http://localhost:5000/order/getAllOrders"
-        : "http://localhost:5000/order/getOrderById";
+        ? `${import.meta.env.VITE_BACKEND_URL}/order/getAllOrders`
+        : `${import.meta.env.VITE_BACKEND_URL}/order/getOrderById`;
 
       console.log("REQUEST URL:", endpoint);
 
@@ -91,7 +91,7 @@ const OrderPage = () => {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/order/updateOrderStatus/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/order/updateOrderStatus/${orderId}`,
         {
           status: newStatus,
         },
@@ -140,7 +140,7 @@ const OrderPage = () => {
 
     try {
       const res = await axios.delete(
-        `http://localhost:5000/order/deleteOrder/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/order/deleteOrder/${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

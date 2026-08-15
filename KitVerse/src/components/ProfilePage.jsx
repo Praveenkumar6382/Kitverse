@@ -46,7 +46,7 @@ const ProfilePage = () => {
     setSaving(true);
     try {
       const res = await axios.put(
-        `http://localhost:3000/update/${userId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/update/${userId}`,
         { name, email },
         {
           headers: {
