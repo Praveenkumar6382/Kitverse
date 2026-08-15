@@ -72,17 +72,16 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    console.log("========== LOGIN DEBUG ==========");
-    console.log("Method:", req.method);
-    console.log("URL:", req.originalUrl);
-    console.log("Origin:", req.headers.origin);
-    console.log("Content-Type:", req.headers["content-type"]);
-    console.log("Body:", req.body);
-    console.log("=================================");
+    console.log("========== LOGIN CONTROLLER ==========");
 
     const { email, password } = req.body || {};
 
+    console.log("Email:", email);
+    console.log("Password received:", password ? "YES" : "NO");
+
     if (!email || !password) {
+      console.log("❌ Missing email/password");
+
       return res.status(400).json({
         success: false,
         message: "Email and Password are required",
@@ -91,21 +90,38 @@ export const loginUser = async (req, res) => {
 
     const user = await userModel.findOne({ email });
 
+    console.log("User found:", user ? "YES" : "NO");
+
     if (!user) {
+      console.log("❌ USER NOT FOUND:", email);
+
       return res.status(400).json({
         success: false,
         message: "User not found",
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log("User ID:", user._id);
+    console.log("User email:", user.email);
+    console.log("Has password:", user.password ? "YES" : "NO");
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    console.log("Password valid:", isPasswordValid);
 
     if (!isPasswordValid) {
+      console.log("❌ INVALID PASSWORD");
+
       return res.status(400).json({
         success: false,
         message: "Password is invalid",
       });
     }
+
+    console.log("✅ LOGIN SUCCESS");
 
     const token = jwt.sign(
       {
@@ -131,8 +147,9 @@ export const loginUser = async (req, res) => {
       token,
       user: userResponse,
     });
+
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("❌ LOGIN ERROR:", error);
 
     return res.status(500).json({
       success: false,
@@ -140,7 +157,6 @@ export const loginUser = async (req, res) => {
     });
   }
 };
-
 //UPDATE USER
 
 export const updateUser = async (req, res) => {
