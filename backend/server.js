@@ -13,9 +13,15 @@ const app = express();
 
 
 // Middleware
-app.use(cors({
-    origin: "https://kitverse.vercel.app"
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://kitverse.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
