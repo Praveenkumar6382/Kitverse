@@ -52,28 +52,26 @@ export const getAllProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log("Requested Product ID:", id);
-
-    // Redis key for this product
     const redisKey = `product:${id}`;
 
-    // 1. Check Redis
-    const cachedProduct = await redisClient.get(redisKey);
+    // 1. Try Redis only if connected
+    if (redisClient.isReady) {
+      try {
+        const cachedProduct = await redisClient.get(redisKey);
 
-    if (cachedProduct) {
-      console.log("✅ Product fetched from Redis");
-
-      return res.status(200).json({
-        success: true,
-        source: "redis",
-        product: JSON.parse(cachedProduct),
-      });
+        if (cachedProduct) {
+          return res.status(200).json({
+            success: true,
+            source: "redis",
+            product: JSON.parse(cachedProduct),
+          });
+        }
+      } catch (redisError) {
+        console.error("Redis cache read failed:", redisError.message);
+      }
     }
 
-    // 2. Redis miss → MongoDB
-    console.log("📦 Product fetched from MongoDB");
-
+    // 2. Fetch from MongoDB
     const product = await ProductModel.findById(id);
 
     if (!product) {
@@ -83,27 +81,31 @@ export const getProductById = async (req, res) => {
       });
     }
 
-    // 3. Save product in Redis for 5 minutes
-    await redisClient.setEx(
-      redisKey,
-      300,
-      JSON.stringify(product)
-    );
-
-    console.log("💾 Product stored in Redis");
+    // 3. Cache only if Redis is available
+    if (redisClient.isReady) {
+      try {
+        await redisClient.setEx(
+          redisKey,
+          300,
+          JSON.stringify(product)
+        );
+      } catch (redisError) {
+        console.error("Redis cache write failed:", redisError.message);
+      }
+    }
 
     return res.status(200).json({
       success: true,
       source: "mongodb",
       product,
     });
+
   } catch (error) {
-    console.error("🔥 GET PRODUCT BY ID ERROR:", error);
+    console.error("GET PRODUCT BY ID ERROR:", error);
 
     return res.status(500).json({
       success: false,
       message: "Failed to fetch product by ID",
-      error: error.message,
     });
   }
 };
