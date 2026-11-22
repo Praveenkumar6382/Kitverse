@@ -1,22 +1,19 @@
 import { createClient } from "redis";
 
 const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
+  url: process.env.REDIS_URL,
 
-  // Don't queue commands when Redis is disconnected
   disableOfflineQueue: true,
 
   socket: {
-    connectTimeout: 5000,
+    connectTimeout: 10000,
 
-    // Limit automatic reconnection attempts
     reconnectStrategy: (retries) => {
-      if (retries > 3) {
-        console.log("Redis reconnect attempts exhausted.");
-        return false;
+      if (retries > 5) {
+        return new Error("Redis reconnect attempts exhausted");
       }
 
-      return Math.min(retries * 500, 2000);
+      return Math.min(retries * 1000, 5000);
     },
   },
 });
@@ -26,7 +23,7 @@ redisClient.on("error", (error) => {
 });
 
 redisClient.on("ready", () => {
-  console.log("Redis is ready");
+  console.log("Redis is ready!");
 });
 
 redisClient.on("end", () => {
@@ -35,12 +32,19 @@ redisClient.on("end", () => {
 
 const connectRedis = async () => {
   try {
+    if (!process.env.REDIS_URL) {
+      throw new Error("REDIS_URL is missing in .env");
+    }
+
     await redisClient.connect();
-    console.log("Connected to Redis");
+
+    console.log("Connected to Redis Cloud!");
+
     return true;
   } catch (error) {
     console.error("Redis connection failed:", error.message);
     console.log("Continuing without Redis. MongoDB will be used.");
+
     return false;
   }
 };
