@@ -56,7 +56,7 @@ const Home = () => {
       name: "Portugal Ronaldo Jersey",
       price: "$10.99",
       image:
-        "https://kickova.com/cdn/shop/files/Portugal_Home_Jersey_World_Cup_2026_1200x.jpg?v=1763019980",
+        "https://troyssquad.store/wp-content/uploads/2025/06/7e5ee6f8-83f7-490a-97a9-2e4d9e1d95c7-640x800.jpeg",
     },
     {
       id: 4,
